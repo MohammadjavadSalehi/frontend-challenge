@@ -20,9 +20,20 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function RegisterView() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [pass, setPass] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const theme = useTheme();
 
@@ -30,81 +41,52 @@ export default function RegisterView() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    router.push('/articles');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let formErrors = {};
+    if (!formData.username.trim()) {
+      formErrors.username = 'Username is required';
+    }
+    if (!formData.email.trim()) {
+      formErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      formErrors.email = 'Email is invalid';
+    }
+    if (!formData.password.trim()) {
+      formErrors.password = 'Password is required';
+    }
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      await fetch('https://api.realworld.io/api/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user: formData }),
+      })
+        .then(async (e) => {
+          const data = await e.json();
+          if (e.status === 201) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+            setErrors({});
+            router.push('/articles');
+          }
+          const serverErrors = {};
+          Object.keys(data.errors).forEach((key) => {
+            serverErrors[key] = data.errors[key].join(', ');
+          });
+          setErrors(serverErrors);
+          alert(e.errors.email);
+          formErrors.password = e.errors.password;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      console.log('Form submitted:', formData);
+    }
   };
-
-  const renderForm = (
-    <>
-      <form action="" onSubmit={handleClick}>
-        <Stack spacing={3} sx={{ mt: 4 }}>
-          <TextField
-            required
-            name="user"
-            label="User"
-            value={username}
-            error={username.length === 0}
-            helperText={!username.length ? 'Required field' : ''}
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-          <TextField
-            required
-            name="email"
-            label="Email"
-            type="email"
-            value={email}
-            error={email.length === 0}
-            helperText={!email.length ? 'Required field' : ''}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-
-          <TextField
-            required
-            name="password"
-            label="Password"
-            value={pass}
-            error={pass.length === 0}
-            helperText={!pass.length ? 'Required field' : ''}
-            onChange={(e) => {
-              setPass(e.target.value);
-            }}
-            type={showPassword ? 'text' : 'password'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Stack>
-
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          variant="contained"
-          color="primary"
-          sx={{ mt: 3 }}
-        >
-          Register
-        </LoadingButton>
-      </form>
-
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        Already Registered?
-        <Link variant="subtitle2" href="/login" sx={{ ml: 0.5 }}>
-          Login
-        </Link>
-      </Typography>
-    </>
-  );
 
   return (
     <Box
@@ -128,7 +110,64 @@ export default function RegisterView() {
             <Typography variant="h3">Register</Typography>
           </center>
 
-          {renderForm}
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3} sx={{ mt: 4 }}>
+              <TextField
+                name="username"
+                label="User"
+                value={formData.username}
+                onChange={handleChange}
+                error={!!errors.username}
+                helperText={errors.username}
+              />
+              <TextField
+                name="email"
+                label="Email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+
+              <TextField
+                name="password"
+                label="Password"
+                value={formData.password}
+                onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Stack>
+
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3 }}
+            >
+              Register
+            </LoadingButton>
+          </form>
+
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            Already Registered?
+            <Link variant="subtitle2" href="/login" sx={{ ml: 0.5 }}>
+              Login
+            </Link>
+          </Typography>
         </Card>
       </Stack>
     </Box>
