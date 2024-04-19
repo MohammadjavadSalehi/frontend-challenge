@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
@@ -46,17 +47,16 @@ export default function Nav({ openNav, onCloseNav }) {
         display: 'flex',
         borderRadius: 1.5,
         alignItems: 'center',
-        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+        bgcolor: (theme) => alpha(theme.palette.grey[100], 0.12),
       }}
     >
       <Avatar src={account.photoURL} alt="photoURL" />
 
-      <Box sx={{ ml: 2 }}>
+      <Box sx={{ ml: 2, color: 'white' }}>
         <Typography variant="subtitle2">{account.displayName}</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
-        </Typography>
+        <Button variant="outlined" sx={{ color: 'red', borderColor: 'red', mt: 2 }}>
+          Logout
+        </Button>
       </Box>
     </Box>
   );
@@ -80,9 +80,11 @@ export default function Nav({ openNav, onCloseNav }) {
         },
       }}
     >
-      <Logo sx={{ mt: 3, ml: 4 }} />
+      <Logo sx={{ mt: 3, ml: 1 }} />
 
       {renderAccount}
+
+      <Typography sx={{ color: 'white', ml: 3, mt: 1 }}>Post</Typography>
 
       {renderMenu}
 
@@ -95,6 +97,7 @@ export default function Nav({ openNav, onCloseNav }) {
       sx={{
         flexShrink: { lg: 0 },
         width: { lg: NAV.WIDTH },
+        bgcolor: '#1c7cd5',
       }}
     >
       {upLg ? (
@@ -145,7 +148,7 @@ function NavItem({ item }) {
         minHeight: 44,
         borderRadius: 0.75,
         typography: 'body2',
-        color: 'text.secondary',
+        color: 'white',
         textTransform: 'capitalize',
         fontWeight: 'fontWeightMedium',
         ...(active && {
