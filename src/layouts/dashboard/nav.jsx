@@ -152,11 +152,11 @@ function NavItem({ item }) {
         textTransform: 'capitalize',
         fontWeight: 'fontWeightMedium',
         ...(active && {
-          color: 'primary.main',
+          color: 'white',
           fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+          bgcolor: (theme) => alpha(theme.palette.grey[100], 0.12),
           '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+            bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.16),
           },
         }),
       }}
