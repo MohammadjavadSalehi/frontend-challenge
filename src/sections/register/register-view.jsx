@@ -4,8 +4,6 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -17,12 +15,15 @@ import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
 
-import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterView() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [pass, setPass] = useState('');
+
   const theme = useTheme();
 
   const router = useRouter();
@@ -30,46 +31,78 @@ export default function RegisterView() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClick = () => {
-    router.push('/dashboard');
+    router.push('/articles');
   };
 
   const renderForm = (
     <>
-      <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+      <form action="" onSubmit={handleClick}>
+        <Stack spacing={3} sx={{ mt: 4 }}>
+          <TextField
+            required
+            name="user"
+            label="User"
+            value={username}
+            error={username.length === 0}
+            helperText={!username.length ? 'Required field' : ''}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
+          />
+          <TextField
+            required
+            name="email"
+            label="Email"
+            type="email"
+            value={email}
+            error={email.length === 0}
+            helperText={!email.length ? 'Required field' : ''}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
 
-        <TextField
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
+          <TextField
+            required
+            name="password"
+            label="Password"
+            value={pass}
+            error={pass.length === 0}
+            helperText={!pass.length ? 'Required field' : ''}
+            onChange={(e) => {
+              setPass(e.target.value);
+            }}
+            type={showPassword ? 'text' : 'password'}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 3 }}
+        >
+          Register
+        </LoadingButton>
+      </form>
+
+      <Typography variant="body2" sx={{ mt: 2 }}>
+        Already Registered?
+        <Link variant="subtitle2" href="/login" sx={{ ml: 0.5 }}>
+          Login
         </Link>
-      </Stack>
-
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        color="inherit"
-        onClick={handleClick}
-      >
-        Login
-      </LoadingButton>
+      </Typography>
     </>
   );
 
@@ -83,14 +116,6 @@ export default function RegisterView() {
         height: 1,
       }}
     >
-      <Logo
-        sx={{
-          position: 'fixed',
-          top: { xs: 16, md: 24 },
-          left: { xs: 16, md: 24 },
-        }}
-      />
-
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
         <Card
           sx={{
@@ -99,52 +124,9 @@ export default function RegisterView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Minimal</Typography>
-
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              Get started
-            </Link>
-          </Typography>
-
-          <Stack direction="row" spacing={2}>
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:facebook-fill" color="#1877F2" />
-            </Button>
-
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-            >
-              <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-            </Button>
-          </Stack>
-
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              OR
-            </Typography>
-          </Divider>
+          <center>
+            <Typography variant="h3">Register</Typography>
+          </center>
 
           {renderForm}
         </Card>
