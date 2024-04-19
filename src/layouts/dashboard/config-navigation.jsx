@@ -1,7 +1,7 @@
 const navConfig = [
   {
     title: 'All Articles',
-    path: '/artilces',
+    path: '/articles',
   },
   {
     title: 'New Article',
