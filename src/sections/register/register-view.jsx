@@ -43,7 +43,7 @@ export default function RegisterView() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let formErrors = {};
+    const formErrors = {};
     if (!formData.username.trim()) {
       formErrors.username = 'Username is required';
     }
@@ -66,9 +66,9 @@ export default function RegisterView() {
         },
         body: JSON.stringify({ user: formData }),
       })
-        .then(async (e) => {
-          const data = await e.json();
-          if (e.status === 201) {
+        .then(async (response) => {
+          const data = await response.json();
+          if (response.ok) {
             localStorage.setItem('user', JSON.stringify(data.user));
             setErrors({});
             router.push('/articles');
@@ -78,13 +78,12 @@ export default function RegisterView() {
             serverErrors[key] = data.errors[key].join(', ');
           });
           setErrors(serverErrors);
-          alert(e.errors.email);
-          formErrors.password = e.errors.password;
+          alert(response.errors.email);
+          formErrors.password = response.errors.password;
         })
-        .catch((e) => {
-          console.log(e);
+        .catch((response) => {
+          console.log(response);
         });
-      console.log('Form submitted:', formData);
     }
   };
 
