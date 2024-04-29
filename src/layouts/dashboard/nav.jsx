@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,12 +10,10 @@ import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import { usePathname } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
+import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
-
-import { account } from 'src/_mock/account';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -26,11 +24,21 @@ import navConfig from './config-navigation';
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
+  const router = useRouter();
   const pathname = usePathname();
-
+  const [userName, setUserName] = useState('');
+  const [image, setImage] = useState('');
   const upLg = useResponsive('up', 'lg');
-
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    setUserName(user.username);
+    setImage(user.image);
+
     if (openNav) {
       onCloseNav();
     }
@@ -50,11 +58,15 @@ export default function Nav({ openNav, onCloseNav }) {
         bgcolor: (theme) => alpha(theme.palette.grey[100], 0.12),
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar src={image} alt="photoURL" />
 
-      <Box sx={{ ml: 2, color: 'white' }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
-        <Button variant="outlined" sx={{ color: 'red', borderColor: 'red', mt: 2 }}>
+      <Box sx={{ ml: 2, color: 'black' }}>
+        <Typography variant="subtitle2">{userName}</Typography>
+        <Button
+          onClick={handleLogout}
+          variant="outlined"
+          sx={{ color: 'red', borderColor: 'red', mt: 2 }}
+        >
           Logout
         </Button>
       </Box>
