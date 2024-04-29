@@ -50,13 +50,8 @@ export default function UserPage() {
         if (res.ok) {
           const data = await res.json();
           const { articles, articlesCount } = data;
-          console.log('dd', data);
-          console.log('da', articles);
-          console.log('db', articlesCount);
           setArticle(articles);
           setArtCount(articlesCount);
-          console.log('a', articles);
-          console.log('a', artCount);
         }
       };
       fetchArticles();
