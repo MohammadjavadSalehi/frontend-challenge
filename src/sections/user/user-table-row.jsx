@@ -7,11 +7,14 @@ import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
+import { useRouter } from 'src/routes/hooks';
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function UserTableRow({ title, author, tags, body, created, id, key }) {
+export default function UserTableRow({ title, author, tags, body, created, id, key, slug }) {
+  const router = useRouter();
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
@@ -21,7 +24,18 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
   const handleCloseMenu = () => {
     setOpen(null);
   };
-
+  const handleDeleteArticle = async () => {
+    await fetch(`https://api.realworld.io/api/articles/${slug}`)
+      .then((e) => {
+        // toast success
+        router.reload();
+        console.log('deleted');
+      })
+      .catch((e) => {
+        console.log('error', e);
+      });
+    router.reload();
+  };
   return (
     <>
       <TableRow>
@@ -61,7 +75,7 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDeleteArticle} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -78,4 +92,5 @@ UserTableRow.propTypes = {
   created: PropTypes.any,
   key: PropTypes.any,
   id: PropTypes.any,
+  slug: PropTypes.any,
 };
