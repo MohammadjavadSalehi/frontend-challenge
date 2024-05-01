@@ -18,7 +18,7 @@ import Scrollbar from 'src/components/scrollbar';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 // import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
+// import UserTableToolbar from '../user-table-toolbar';
 // import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -35,7 +35,7 @@ export default function UserPage() {
 
   const [orderBy, setOrderBy] = useState('name');
 
-  const [filterName, setFilterName] = useState('');
+  // const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -48,10 +48,11 @@ export default function UserPage() {
         const res = await fetch('https://api.realworld.io/api/articles');
         console.log(res);
         if (res.ok) {
-          const data = await res.json();
-          const { articles, articlesCount } = data;
-          setArticle(articles);
-          setArtCount(articlesCount);
+          res.json().then((data) => {
+            const { articles, articlesCount } = data;
+            setArticle(articles);
+            setArtCount(articlesCount);
+          });
         }
       };
       fetchArticles();
@@ -102,10 +103,10 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
+  // const handleFilterByName = (event) => {
+  //   setPage(0);
+  //   setFilterName(event.target.value);
+  // };
 
   // const dataFiltered = applyFilter({
   //   inputData: article,
@@ -130,11 +131,11 @@ export default function UserPage() {
         </Typography>
       </Container>
       <Card>
-        <UserTableToolbar
+        {/* <UserTableToolbar
           numSelected={selected?.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
-        />
+        /> */}
 
         {article && (
           <Scrollbar>
@@ -143,7 +144,7 @@ export default function UserPage() {
                 <UserTableHead
                   order={order}
                   orderBy={orderBy}
-                  rowCount={artCount > 0 ? artCount : 10}
+                  rowCount={artCount}
                   numSelected={selected?.length}
                   onRequestSort={handleSort}
                   headLabel={[
@@ -167,7 +168,7 @@ export default function UserPage() {
                       body={row.body.slice(0, 20)}
                       created={row.createdAt.slice(0, 10)}
                       selected={selected?.indexOf(row.title) !== -1}
-                      handleClick={(event) => handleClick(event, row.title)}
+                      handleClick={(event) => handleClick(event, row.id)}
                       slug={row.slug}
                     />
                   ))}
