@@ -19,8 +19,9 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginView() {
+export default function RegisterView() {
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
   });
@@ -43,6 +44,9 @@ export default function LoginView() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = {};
+    if (!formData.username.trim()) {
+      formErrors.username = 'Username is required';
+    }
     if (!formData.email.trim()) {
       formErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -54,7 +58,7 @@ export default function LoginView() {
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
     } else {
-      await fetch('https://api.realworld.io/api/users/login', {
+      await fetch('https://api.realworld.io/api/users', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -62,24 +66,23 @@ export default function LoginView() {
         },
         body: JSON.stringify({ user: formData }),
       })
-        .then(async (r) => {
-          const data = await r.json();
-          if (r.ok) {
+        .then(async (response) => {
+          const data = await response.json();
+          if (response.ok) {
             localStorage.setItem('user', JSON.stringify(data.user));
             setErrors({});
             router.push('/articles');
-          } else {
-            const serverErrors = {};
-            Object.keys(data.errors).forEach((key) => {
-              serverErrors[key] = data.errors[key].join(', ');
-            });
-            setErrors(serverErrors);
-            alert(r.errors.email);
-            formErrors.password = r.errors.password;
           }
+          const serverErrors = {};
+          Object.keys(data.errors).forEach((key) => {
+            serverErrors[key] = data.errors[key].join(', ');
+          });
+          setErrors(serverErrors);
+          alert(response.errors.email);
+          formErrors.password = response.errors.password;
         })
-        .catch((r) => {
-          console.log(r);
+        .catch((response) => {
+          console.log(response);
         });
     }
   };
@@ -103,11 +106,19 @@ export default function LoginView() {
           }}
         >
           <center>
-            <Typography variant="h3">Login</Typography>
+            <Typography variant="h3">Register</Typography>
           </center>
 
           <form onSubmit={handleSubmit}>
             <Stack spacing={3} sx={{ mt: 4 }}>
+              <TextField
+                name="username"
+                label="User"
+                value={formData.username}
+                onChange={handleChange}
+                error={!!errors.username}
+                helperText={errors.username}
+              />
               <TextField
                 name="email"
                 label="Email"
@@ -117,6 +128,7 @@ export default function LoginView() {
                 error={!!errors.email}
                 helperText={errors.email}
               />
+
               <TextField
                 name="password"
                 label="Password"
@@ -145,14 +157,14 @@ export default function LoginView() {
               color="primary"
               sx={{ mt: 3 }}
             >
-              Login
+              Register
             </LoadingButton>
           </form>
 
           <Typography variant="body2" sx={{ mt: 2 }}>
-            Don`t have account?
-            <Link variant="subtitle2" href="/register" sx={{ ml: 0.5 }}>
-              Register now
+            Already Registered?
+            <Link variant="subtitle2" href="/login" sx={{ ml: 0.5 }}>
+              Login
             </Link>
           </Typography>
         </Card>
