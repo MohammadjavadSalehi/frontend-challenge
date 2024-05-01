@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
@@ -8,10 +10,9 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
-
 // ----------------------------------------------------------------------
 
-export default function UserTableRow({ title, author, tags, body, created, id, key }) {
+export default function UserTableRow({ title, author, tags, body, created, id, key, slug }) {
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
@@ -21,9 +22,20 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
   const handleCloseMenu = () => {
     setOpen(null);
   };
-
+  const handleDeleteArticle = async () => {
+    await fetch(`https://api.realworld.io/api/articles/${slug}`)
+      .then((e) => {
+        toast.success('Article deleted successfully');
+        setOpen(null);
+      })
+      .catch((e) => {
+        toast.error('Article did not deleted successfully');
+        setOpen(null);
+      });
+  };
   return (
     <>
+      <ToastContainer position="top-right" rtl closeOnClick pauseOnHover theme="colored" />
       <TableRow>
         <TableCell>{id}</TableCell>
 
@@ -61,7 +73,7 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDeleteArticle} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -78,4 +90,5 @@ UserTableRow.propTypes = {
   created: PropTypes.any,
   key: PropTypes.any,
   id: PropTypes.any,
+  slug: PropTypes.any,
 };

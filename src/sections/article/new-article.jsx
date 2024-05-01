@@ -1,4 +1,6 @@
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -86,8 +88,12 @@ export default function NewArticle() {
           const data = await r.json();
           if (r.ok) {
             setErrors({});
-            router.push('/articles');
+            toast.success('Article created successfully');
+            setTimeout(() => {
+              router.push('/articles');
+            }, 2000);
           } else {
+            toast.error('Article not created successfully');
             const serverErrors = {};
             Object.keys(data.errors).forEach((key) => {
               serverErrors[key] = data.errors[key].join(', ');
@@ -105,6 +111,7 @@ export default function NewArticle() {
 
   return (
     <Container>
+      <ToastContainer position="top-right" rtl closeOnClick pauseOnHover theme="colored" />
       <Stack sx={{ height: 1, width: '60%' }}>
         <Typography variant="h3">New Article</Typography>
 

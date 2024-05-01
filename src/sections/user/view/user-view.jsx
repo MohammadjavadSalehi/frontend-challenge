@@ -168,6 +168,7 @@ export default function UserPage() {
                       created={row.createdAt.slice(0, 10)}
                       selected={selected?.indexOf(row.title) !== -1}
                       handleClick={(event) => handleClick(event, row.title)}
+                      slug={row.slug}
                     />
                   ))}
 
