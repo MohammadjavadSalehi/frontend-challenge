@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
@@ -7,14 +9,10 @@ import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
-import { useRouter } from 'src/routes/hooks';
-
 import Iconify from 'src/components/iconify';
-
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({ title, author, tags, body, created, id, key, slug }) {
-  const router = useRouter();
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
@@ -27,17 +25,17 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
   const handleDeleteArticle = async () => {
     await fetch(`https://api.realworld.io/api/articles/${slug}`)
       .then((e) => {
-        // toast success
-        router.reload();
-        console.log('deleted');
+        toast.success('Article deleted successfully');
+        setOpen(null);
       })
       .catch((e) => {
-        console.log('error', e);
+        toast.error('Article did not deleted successfully');
+        setOpen(null);
       });
-    router.reload();
   };
   return (
     <>
+      <ToastContainer position="top-right" rtl closeOnClick pauseOnHover theme="colored" />
       <TableRow>
         <TableCell>{id}</TableCell>
 
