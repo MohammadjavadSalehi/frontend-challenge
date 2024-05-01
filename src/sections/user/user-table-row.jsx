@@ -3,16 +3,21 @@ import PropTypes from 'prop-types';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
 
+// import Link from '@mui/material/Link';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 
+import { useRouter } from 'src/routes/hooks';
+
 import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({ title, author, tags, body, created, id, key, slug }) {
+  const router = useRouter();
+
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
@@ -21,6 +26,9 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
 
   const handleCloseMenu = () => {
     setOpen(null);
+  };
+  const handleEditArticle = () => {
+    router.push(`/articles/edit/${slug}`);
   };
   const handleDeleteArticle = async () => {
     await fetch(`https://api.realworld.io/api/articles/${slug}`)
@@ -68,7 +76,7 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={handleEditArticle}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>

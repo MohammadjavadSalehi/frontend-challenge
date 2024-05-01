@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
@@ -12,7 +13,9 @@ import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
-export default function NewArticle() {
+export default function EditArticle() {
+  const { id } = useParams();
+
   const router = useRouter();
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -33,6 +36,19 @@ export default function NewArticle() {
   };
 
   useEffect(() => {
+    fetch(`https://api.realworld.io/api/articles/${id}`).then((res) => {
+      console.log(res);
+      res.json().then((data) => {
+        console.log(data.article.title);
+
+        setFormData({
+          title: data.article.title,
+          body: data.article.body,
+          description: data.article.description,
+        });
+        setSelectedTags(data.article.tagList);
+      });
+    });
     fetch('https://api.realworld.io/api/tags')
       .then((response) => {
         if (!response.ok) {
@@ -47,7 +63,7 @@ export default function NewArticle() {
         console.error('Error fetching tags:', error);
         setTags([]);
       });
-  }, []);
+  }, [id]);
 
   const handleTagSelect = (tag) => {
     if (selectedTags.includes(tag)) {
@@ -73,8 +89,8 @@ export default function NewArticle() {
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
     } else {
-      await fetch('https://api.realworld.io/api/articles', {
-        method: 'POST',
+      await fetch(`https://api.realworld.io/api/articles/${id}`, {
+        method: 'PUT',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -82,13 +98,13 @@ export default function NewArticle() {
             'Token ' +
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyMTkxNH0sImlhdCI6MTcxNDUwMDQ4MSwiZXhwIjoxNzE5Njg0NDgxfQ.b9VVVtYpgivUOoXWxpv6DL6PVReavNVSGR1VxjHjXiM',
         },
-        body: JSON.stringify({ article: { ...formData, tags: selectedTags } }),
+        body: JSON.stringify({ article: { ...formData, tagList: selectedTags } }),
       })
         .then(async (r) => {
           const data = await r.json();
           if (r.ok) {
             setErrors({});
-            toast.success('Article created successfully');
+            toast.success('Article edited successfully');
             setTimeout(() => {
               router.push('/articles');
             }, 2000);
@@ -113,7 +129,7 @@ export default function NewArticle() {
     <Container>
       <ToastContainer position="top-right" rtl closeOnClick pauseOnHover theme="colored" />
       <Stack sx={{ height: 1, width: '60%' }}>
-        <Typography variant="h3">New Article</Typography>
+        <Typography variant="h3">Edit Article</Typography>
 
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', gap: 50 }}>
@@ -138,7 +154,7 @@ export default function NewArticle() {
                 name="body"
                 label="Body"
                 multiline
-                rows={5}
+                rows={8}
                 value={formData.body}
                 onChange={handleChange}
                 error={!!errors.body}
@@ -154,7 +170,7 @@ export default function NewArticle() {
                       <li key={tag}>
                         <input
                           type="checkbox"
-                          checked={selectedTags.includes(tag)}
+                          checked={selectedTags?.includes(tag)}
                           onChange={() => handleTagSelect(tag)}
                         />
                         <span>{tag}</span>
