@@ -35,9 +35,11 @@ export default function Nav({ openNav, onCloseNav }) {
   };
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-
-    setUserName(user.username);
-    setImage(user.image);
+    if (!user) router.push('/login');
+    else {
+      setUserName(user.username);
+      setImage(user.image);
+    }
 
     if (openNav) {
       onCloseNav();
