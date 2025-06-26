@@ -45,7 +45,7 @@ export default function UserTableRow({ title, author, tags, body, created, id, k
     <>
       <ToastContainer position="top-right" rtl closeOnClick pauseOnHover theme="colored" />
       <TableRow>
-        <TableCell>{id}</TableCell>
+        <TableCell>{id + 1}</TableCell>
 
         <TableCell component="th" scope="row" padding="none">
           {title}

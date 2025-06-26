@@ -14,9 +14,11 @@ import { useRouter } from 'src/routes/hooks';
 
 import Scrollbar from 'src/components/scrollbar';
 
-// import TableNoData from '../table-no-data';
+// import { emptyRows } from '../utils';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
+// import TableEmptyRows from '../table-empty-rows';
+// import TableNoData from '../table-no-data';
 // import TableEmptyRows from '../table-empty-rows';
 // import UserTableToolbar from '../user-table-toolbar';
 // import { emptyRows, applyFilter, getComparator } from '../utils';
@@ -37,7 +39,7 @@ export default function UserPage() {
 
   // const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -95,11 +97,13 @@ export default function UserPage() {
   };
 
   const handleChangePage = (event, newPage) => {
+    console.log(event, newPage);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setPage(0);
+    console.log(event);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
@@ -173,10 +177,7 @@ export default function UserPage() {
                     />
                   ))}
 
-                  {/* <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, article.length)}
-                /> */}
+                  {/* <TableEmptyRows height={77} emptyRows={emptyRows(page, rowsPerPage, artCount)} /> */}
 
                   {/* {notFound && <TableNoData query={filterName} />} */}
                 </TableBody>
@@ -185,7 +186,7 @@ export default function UserPage() {
           </Scrollbar>
         )}
         <TablePagination
-          page={page}
+          page={page + 1}
           component="div"
           count={artCount}
           rowsPerPage={rowsPerPage}

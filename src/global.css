@@ -1,2 +1,6 @@
 /* scrollbar */
 @import 'simplebar-react/dist/simplebar.min.css';
+
+.MuiBox-root.css-1lf3use {
+  background-color: #1c7cd5 !important;
+}
